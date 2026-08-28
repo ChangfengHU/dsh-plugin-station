@@ -13,6 +13,7 @@
 import type { CatalogPage, DirectoryEntry, InstallCandidate, InstallPlan, McpRow, PackageRow, SkillRow, SkillState, VerifyCheck } from '../wire.ts'
 import { MarketSection, type MarketApi } from './MarketSection.tsx'
 import { PluginsSection, type PluginsApi } from './PluginsSection.tsx'
+import { RemoteAccessSection } from './RemoteAccessSection.tsx'
 import { en, zh, type ConsoleLocaleKey } from './locales.ts'
 import { CONSOLE_REMOTE, unwrap } from './remote.ts'
 import { installStyles } from './styles.ts'
@@ -81,6 +82,18 @@ export async function apply(ctx: any): Promise<void> {
     locale: NS,
     inject: () => ({ api: marketApi, t }),
   }, MarketSection))
+
+  // Remote access: the one panel that is useful precisely when the rest of
+  // this page cannot load. It reads its own state from the address bar, so it
+  // needs no host seam.
+  ctx.slots.inject('settings.plugins.tab', () => ctx.slots.register({
+    name: 'settings.plugins.tab',
+    id: 'plugin-station-remote',
+    order: 32,
+    label: () => t('remoteNav'),
+    locale: NS,
+    inject: () => ({ api: null, t }),
+  }, RemoteAccessSection))
 
   // A tab on the Host's own Plugins page, not another top-level entry: code
   // plugins belong there, and the Host publishes this slot for exactly this.
