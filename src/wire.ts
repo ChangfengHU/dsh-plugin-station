@@ -1,0 +1,240 @@
+/**
+ * Wire contract for the `pluginStation` Remote namespace — the invocation
+ * descriptors shared verbatim by the host TYPERT manifest and the client
+ * Remote contribution, so the two faces can never drift.
+ *
+ * Every method is string-in / string-out carrying JSON. Typert's only codec
+ * mode is `strict` and its loader accepts zod v4 schemas only, so each
+ * descriptor needs a real one; keeping the payloads as JSON strings makes
+ * that one `z.string()` per side instead of a schema per shape, on a surface
+ * that is still moving.
+ *
+ * @module dsh-plugin-station/wire
+ */
+
+import { z } from 'zod'
+
+/** Package id, repeated in every descriptor id and in both Typert faces. */
+export const PKG = 'dsh-plugin-station'
+
+/** One JSON-string parameter. */
+function jsonParam(name: string) {
+  return Object.freeze({
+    name,
+    wire: name,
+    source: 'json',
+    codec: Object.freeze({ mode: 'strict', typeSymbol: `${PKG}/types#Json`, schema: z.string() }),
+  })
+}
+
+/** One JSON-string result. */
+const JSON_RESULT = Object.freeze({ mode: 'strict', typeSymbol: `${PKG}/types#Json`, schema: z.string() })
+
+function descriptor(method: string, argc: 0 | 1) {
+  return Object.freeze({
+    id: `${PKG}#pluginStation/${method}`,
+    service: 'pluginStation',
+    namespace: 'pluginStation',
+    method,
+    invocation: Object.freeze({ kind: 'direct' }),
+    parameters: Object.freeze(argc === 1 ? [jsonParam('payload')] : []),
+    result: JSON_RESULT,
+    sourceLocation: Object.freeze({ file: 'src/wire.ts', line: 1, column: 1 }),
+  })
+}
+
+/** Every method the panels call, in the order the service defines them. */
+export const METHODS = [
+  
+  
+  
+  
+  ['codePlugins', 0], ['setPluginDisabled', 1], ['removePlugin', 1], ['addPlugin', 1],
+  ['catalog', 1], ['refreshCatalog', 0], ['restartHost', 0], ['pendingRestart', 0],
+] as const
+
+/** The canonical invocation list. Both faces register exactly this. */
+export const CONSOLE_INVOCATIONS = Object.freeze(METHODS.map(([method, argc]) => descriptor(method, argc)))
+
+/**
+ * The three states a skill can be parked in.
+ *
+ * These are exactly dsh's own two policy booleans, in their three meaningful
+ * combinations. A fourth state that parked the description elsewhere to save
+ * tokens lived here briefly; it was dropped because a model that knows a
+ * skill's name but not when to use it will not reach for it anyway, which
+ * made it a more expensive `user-only`.
+ */
+export type SkillState = 'on' | 'user-only' | 'off'
+
+/** One skill as the panel sees it. */
+export interface SkillRow {
+  /** Directory name under its root — what `/name` resolves to. */
+  id: string
+  /** `name:` from the frontmatter, falling back to the directory name. */
+  name: string
+  /** The `description:`, which is what sits in context every turn. */
+  description: string
+  /** Absolute path of the skill directory. */
+  dir: string
+  /** The root this skill was found under, `~`-shortened. */
+  root: string
+  /** Which agent owns that root: `workspace`, `agents`, `dsh`, `claude`, … */
+  origin: string
+  /** Whether dsh's own filesystem provider reads this root. */
+  native: boolean
+  /** Where this skill currently sits among the four states. */
+  state: SkillState
+  /** Estimated context cost of the description, when the model can see it. */
+  tokens: number
+  /** Epoch ms of the newest file in the skill directory. */
+  updatedAt: number
+  /** Relative paths inside the skill directory, `SKILL.md` first. */
+  files: string[]
+  /** Why the skill cannot load, as a key the client renders in its language. */
+  problem: string | null
+  /** The root whose copy of this name wins, when this one is shadowed. */
+  shadowedBy: string | null
+}
+
+/** One tool a server registered. */
+export interface McpTool {
+  name: string
+  description: string
+  /** Estimated context cost of this tool's schema. */
+  tokens: number
+  /** Whether the panel's per-tool policy currently hides it. */
+  disabled: boolean
+}
+
+/** One configured MCP server joined to what it actually registered. */
+export interface McpRow {
+  name: string
+  entryId: string
+  transport: string
+  target: string
+  disabled: boolean
+  fiber: string | null
+  tools: McpTool[]
+  /** Sum of the enabled tools' schema cost. */
+  tokens: number
+}
+
+/** One installable entry from the catalog the station browses. */
+export interface CatalogEntry {
+  /** Short display name — the last segment of the catalog's own name. */
+  name: string
+  /** The catalog's full name, `owner/repo` or `owner/repo#packages/x`. */
+  full: string
+  /** The repository part, which is what sibling folding groups on. */
+  repo: string
+  owner: string
+  url: string
+  category: string
+  description: string
+  npm: string | null
+  tarball: string | null
+  /** The repository's star count, as published. */
+  stars: number
+  /** Stars divided by sibling count, and zero for an examples/ entry. */
+  adjusted: number
+  /** How many catalog entries share this repository. */
+  siblings: number
+  downloads: number
+  /** ISO date the catalog added it. */
+  added: string
+  /** What `dsh plugin add` should receive. Empty when nothing installable. */
+  spec: string
+  installable: boolean
+  score: number
+  /** Filled in per request: whether the profile declares it. */
+  installed?: boolean
+  /** Whether it is also live in the composition — false until a restart. */
+  active?: boolean
+  /** Locale key stating why this entry is a pick, when it is one. */
+  why?: string
+}
+
+/** One page of catalog results. */
+export interface CatalogPage {
+  entries: CatalogEntry[]
+  total: number
+  page: number
+  pages: number
+  categories: string[]
+  catalogTotal: number
+}
+
+/** One live composition entry, as the code-plugin view reports it. */
+export interface PluginEntryRow {
+  /** The entry id in the composition — what a patch layer addresses. */
+  id: string
+  /** The module specifier the loader resolved, e.g. `dshmarket/client`. */
+  module: string
+  /** Whether a patch layer has switched this entry off. */
+  disabled: boolean
+  /**
+   * The fiber's phase: `active`, `failed`, `loading`, … or null when the
+   * entry has no fiber at all. This is the honest state; `disabled` is only
+   * the intent, and an enabled entry can still be `failed`.
+   */
+  fiber: string | null
+}
+
+/** One installed package, with every composition entry it contributed. */
+export interface PackageRow {
+  name: string
+  version: string | null
+  description: string
+  /** The dependency spec: a range, `github:owner/repo`, a tarball, `link:`. */
+  source: string
+  /** Whether it declares `dsh.bundle` — i.e. it is a plugin, not a dependency. */
+  bundled: boolean
+  /** Whether it ships a browser half. */
+  hasClient: boolean
+  entries: PluginEntryRow[]
+}
+
+/** What an install string was recognised as. */
+export interface InstallPlan {
+  kind: 'github' | 'git' | 'archive' | 'file' | 'shell'
+  label: string
+  source: string
+  ref?: string
+  sub?: string
+  /** Exactly what will run, shown before anything does. */
+  plan: string
+  candidates: InstallCandidate[]
+}
+
+/** One skill found inside a staged source. */
+export interface InstallCandidate {
+  /** Path relative to the staged root. */
+  path: string
+  /** Frontmatter name — the directory it will be installed as. */
+  name: string
+  description: string
+}
+
+/** One post-install check. */
+export interface VerifyCheck {
+  key: 'skillMd' | 'frontmatter' | 'executable' | 'registry'
+  ok: boolean
+  detail: string
+}
+
+/** One third-party skill repository the Browse panel found. */
+export interface DirectoryEntry {
+  /** `owner/repo` on GitHub. */
+  name: string
+  description: string
+  /** Where it came from, and how popular — rendered as a chip. */
+  source: string
+  /** Handed to the install flow verbatim. */
+  install: string
+  /** A pinned revision, when the source declares one. GitHub search cannot. */
+  version: string | null
+  installed: boolean
+  /** Curated by this deployment, rather than found on a public index. */
+  curated: boolean
+}
