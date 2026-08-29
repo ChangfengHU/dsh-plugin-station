@@ -11,24 +11,6 @@ export type ConsoleLocaleKey = keyof typeof en
 
 /** English copy. */
 export const en = {
-  remoteNav: "Remote access",
-  remoteLoopbackOk: "✓ You are on a loopback address — the configuration plane is fully available here.",
-  remoteLoopbackWhy: "dsh pins credentials and settings to loopback until it has an authentication layer, so over a domain the Plugin configuration tab renders empty. On 127.0.0.1 that fence is satisfied and everything works.",
-  remoteFenced: "You are viewing this over {host}, not a loopback address.",
-  remoteExplain: "That is why Plugin configuration is empty: dsh fences credentials and settings to loopback, and its client keeps the settings mirror in \"memory\" mode when the address bar is not 127.0.0.1 — so it never asks the Host for anything, and renders no cards. A plugin cannot lift that fence from inside; both choices below act at the edge instead.",
-  remoteSshTitle: "Option 1 — SSH tunnel (nothing opens up)",
-  remoteSshBody: "Forward the port to your own machine, then open http://localhost:{port}. The address bar is loopback, so the whole plane works, and nothing is exposed to anyone else. This is the safe default.",
-  remoteSshLabel: "run on your machine, then open http://localhost:",
-  remoteOpenTitle: "Option 2 — open the plane at the edge",
-  remoteOpenWarn: "This exposes credentials.set/unset, settings.mutate and host.openPath to anyone who reaches this URL. It is exactly what the fence prevents. Do it only on a deployment whose URL you treat as a secret, and remove the route to undo it.",
-  remoteOpenBody: "Two moving parts have to agree: a second tunnel hostname ({originHost}) that rewrites the Host to loopback, and a Worker that rewrites the Origin and the one client bundle. The script below is generated for this deployment.",
-  remotePort: "dsh port",
-  remoteStep1: "In the tunnel, add hostname {originHost} → http://127.0.0.1:{port} with originRequest.httpHostHeader = 127.0.0.1:{port}.",
-  remoteStep2: "Deploy the Worker below.",
-  remoteStep3: "Route {host}/* to that Worker.",
-  remoteWorkerLabel: "Cloudflare Worker",
-  remoteHealthNote: "After it is live, https://{host}/__loopback-proxy-health returns 200 while the bundle rewrite still matches upstream, and 500 if a dsh upgrade moved it — so a silent regression is visible instead of a blank page.",
-
   featuredSkillMcp: "Why: the panel this station cannot replace — skills and MCP are not plugins, and this is where they live.",
 
   replyLost: "The reply did not come back — installing rewrites the profile and can restart this panel mid-call. The list below is re-read from disk, so it shows what actually happened.",
@@ -45,6 +27,7 @@ export const en = {
   featuredSidebar: "Why: the highest-download UI plugin in the catalog, and the one that changes the day-to-day most.",
   featuredModlens: "Why: gives a text-only model eyes, without a key.",
   featuredContext: "Why: shows what is eating your context window, which is the thing nothing else tells you.",
+  featuredRemote: "Why: restores Plugin configuration through a local SSH tunnel without publishing DSH's privileged settings plane.",
 
   restartPending: "Installed but not running yet: {list}. dsh picks them up on its next start.",
   restartNow: "Restart now",
@@ -226,24 +209,6 @@ export const en = {
 
 /** Chinese copy. */
 export const zh: Record<ConsoleLocaleKey, string> = {
-  remoteNav: "远程访问",
-  remoteLoopbackOk: "✓ 你正用回环地址访问——配置面在这里完整可用。",
-  remoteLoopbackWhy: "dsh 在有认证层之前，把凭据与设置钉死在回环上，所以经域名访问时 Plugin configuration 是空的。在 127.0.0.1 上这道栅栏被满足，一切正常。",
-  remoteFenced: "你现在是经 {host} 访问的，不是回环地址。",
-  remoteExplain: "这就是 Plugin configuration 空白的原因：dsh 把凭据与设置钉死在回环，而它的客户端在地址栏不是 127.0.0.1 时让设置镜像跑“内存”模式——根本不去问宿主，于是一张卡都不渲染。插件在栅栏内部关不掉它；下面两个方案都在边缘层动手。",
-  remoteSshTitle: "方案一 — SSH 隧道（什么都不对外开放）",
-  remoteSshBody: "把端口转发到你自己的电脑，然后打开 http://localhost:{port}。地址栏是回环，整个配置面都能用，且不向任何人暴露。这是安全默认。",
-  remoteSshLabel: "在你的电脑上执行，然后打开 http://localhost:{port}",
-  remoteOpenTitle: "方案二 — 在边缘层打开配置面",
-  remoteOpenWarn: "这会把 credentials.set/unset、settings.mutate、host.openPath 开放给能访问这个 URL 的任何人——正是栅栏要挡住的。只在你把 URL 当密钥对待的部署上做，删掉路由即可撤销。",
-  remoteOpenBody: "两个部件必须配合：一个把 Host 改写成回环的第二隧道主机名（{originHost}），加一个改写 Origin 与那一个客户端 bundle 的 Worker。下面的脚本已按这个部署生成。",
-  remotePort: "dsh 端口",
-  remoteStep1: "在隧道里新增主机名 {originHost} → http://127.0.0.1:{port}，并设 originRequest.httpHostHeader = 127.0.0.1:{port}。",
-  remoteStep2: "部署下面这个 Worker。",
-  remoteStep3: "把 {host}/* 路由到该 Worker。",
-  remoteWorkerLabel: "Cloudflare Worker",
-  remoteHealthNote: "上线后，https://{host}/__loopback-proxy-health 在 bundle 改写仍匹配上游时返回 200，dsh 升级导致锚点失效时返回 500——让静默回归变成可见，而不是又一个空白页。",
-
   featuredSkillMcp: "理由：这个站取代不了的那一半——技能和 MCP 不是插件，它们归它管。",
 
   replyLost: "应答没回来——安装会改写 profile，可能在调用中途把这个面板重建掉。下面的列表是从磁盘重新读的，以它为准。",
@@ -260,6 +225,7 @@ export const zh: Record<ConsoleLocaleKey, string> = {
   featuredSidebar: "理由：目录里下载量最高的 UI 插件，也是最能改变日常操作的那个。",
   featuredModlens: "理由：让纯文本模型长出眼睛，而且不用配 key。",
   featuredContext: "理由：告诉你上下文窗口被什么吃掉了——这件事没有别的东西会告诉你。",
+  featuredRemote: "理由：通过本地 SSH 隧道恢复 Plugin configuration，而不把 DSH 的敏感设置面发布到公网。",
 
   restartPending: "已装但还没跑起来：{list}。dsh 下次启动时才会加载它们。",
   restartNow: "立即重启",

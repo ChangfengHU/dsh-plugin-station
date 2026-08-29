@@ -166,7 +166,7 @@ describe('market catalog', () => {
     const rows = normalize(raw)
     const picks = page(rows, { featured: true }, new Set())
     // Only entries the list names, in the order it names them.
-    assert.deepEqual(picks.entries.map(r => r.name), ['dsh-skill-mcp-console', 'dsh-codex-claude-cli'],
+    assert.deepEqual(picks.entries.map(r => r.name), ['dsh-skill-mcp-console', 'dsh-codex-claude-cli', 'dsh-remote-access'],
       'a pick the catalog does not carry is still listed; one it names but the fixture lacks is skipped')
     // A pick with no stated reason is an ad, so every one carries a key.
     assert.ok(picks.entries.every(r => typeof r.why === 'string' && r.why.length > 0))

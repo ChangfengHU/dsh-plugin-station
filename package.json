@@ -1,6 +1,6 @@
 {
   "name": "dsh-plugin-station",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "The plugin station for DeepSeek Harness: a code-plugin tab that lists only what you installed, grouped by package with real fiber state, and a market that thins monorepo stars, folds siblings, and puts a short list of picks with stated reasons in front. · DSH 插件站:只列你装的代码插件 + 一个会摊薄星标、折叠同仓库、带精选理由的市场。",
   "keywords": [
     "dsh",

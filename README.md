@@ -34,6 +34,10 @@ first screen belongs to whoever split their repo hardest.
 Above the ranking sits a short list of **picks**, each stating its reason. A
 pick with no stated reason is an ad.
 
+Remote configuration guidance lives in the separately installable
+[`dsh-remote-access`](https://github.com/ChangfengHU/dsh-remote-access) plugin.
+Station lists it in Market but does not bundle remote-access behavior.
+
 ## Install and remove
 
 Both re-invoke the Host's own `dsh plugin --profile <p> add|remove`, spawned

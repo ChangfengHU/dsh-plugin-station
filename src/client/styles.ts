@@ -350,21 +350,6 @@ a.dps-btn { text-decoration: none; display: inline-block; }
 
 @media (prefers-reduced-motion: reduce) { .dps-root *, .dps-modal * { transition: none !important; } }
 
-/* remote access panel */
-.dps-ok-banner { padding: 9px 12px; border-radius: 8px; font-size: 13px;
-  background: var(--dps-ok-bg, rgba(60,160,90,.12)); border: 1px solid var(--dps-ok, #3ca05a); }
-.dps-sect { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
-.dps-h4 { margin: 0; font-size: 13.5px; font-weight: 600; }
-.dps-danger-note { padding: 9px 12px; border-radius: 8px; font-size: 12.6px; line-height: 1.55;
-  background: var(--dps-bad-bg); border: 1px solid var(--dps-bad); color: var(--dps-bad); }
-.dps-steps { margin: 2px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 5px;
-  font-size: 12.8px; line-height: 1.5; }
-.dps-portrow { display: flex; align-items: center; gap: 8px; font-size: 12.8px; }
-.dps-portinput { width: 88px; }
-.dps-copywrap { border: 1px solid var(--dps-line); border-radius: 9px; overflow: hidden; }
-.dps-copyhead { display: flex; align-items: center; justify-content: space-between; gap: 8px;
-  padding: 6px 10px; background: var(--dps-surface); border-bottom: 1px solid var(--dps-line); }
-.dps-copybody { margin: 0; border: 0; border-radius: 0; max-height: 260px; }
 `
 
 /** Install the stylesheet once; returns the disposer `ctx.effect` expects. */
