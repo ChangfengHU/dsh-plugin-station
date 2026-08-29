@@ -36,14 +36,15 @@ export interface MarketApi {
 }
 
 const SORTS = ['score', 'downloads', 'stars', 'recent'] as const
+type MarketView = 'featured' | 'popular' | 'recent' | 'all'
 
 /** One installable row. */
 function Card({ row, t, onInstall, busy, elapsed }: {
   row: CatalogEntry; t: T; busy: string; elapsed: number; onInstall: (row: CatalogEntry) => void
 }) {
   return (
-    <div className="dps-card dps-mkt">
-      <div className="dps-row">
+    <article className="dps-market-card">
+      <div className="dps-market-head">
         <div className="dps-grow">
           <div className="dps-name">
             {row.name}
@@ -76,8 +77,8 @@ function Card({ row, t, onInstall, busy, elapsed }: {
       </div>
       {row.why ? <p className="dps-why">{t(row.why as never)}</p> : null}
       {row.description ? <p className="dps-cd">{row.description}</p> : null}
-      <div className="dps-mono dps-trunc dps-dim">{row.spec || t('noSpec')}</div>
-    </div>
+      <div className="dps-market-source dps-mono dps-trunc dps-dim">{row.spec || t('noSpec')}</div>
+    </article>
   )
 }
 
@@ -95,7 +96,7 @@ export function MarketSection({ api, t, onInstalled }: { api: MarketApi; t: T; o
   const [category, setCategory] = useState('all')
   const [sort, setSort] = useState<string>('score')
   const [pageIndex, setPageIndex] = useState(0)
-  const [featured, setFeatured] = useState(true)
+  const [view, setView] = useState<MarketView>('featured')
   const [busy, setBusy] = useState('')
   const [elapsed, setElapsed] = useState(0)
   const [restartNonce, setRestartNonce] = useState(0)
@@ -105,15 +106,17 @@ export function MarketSection({ api, t, onInstalled }: { api: MarketApi; t: T; o
 
   const load = useCallback(async (patch: { query?: string; page?: number } = {}) => {
     try {
+      const requestedSort = view === 'popular' ? 'downloads' : view === 'recent' ? 'recent' : sort
       const result = await api.catalog({
-        query: patch.query ?? query, category, sort, page: patch.page ?? pageIndex, featured,
+        query: patch.query ?? query, category, sort: requestedSort, page: patch.page ?? pageIndex,
+        featured: view === 'featured',
       })
       setData(result)
       setError('')
     } catch (cause) { setError(String(cause)) }
-  }, [api, query, category, sort, pageIndex])
+  }, [api, query, category, sort, pageIndex, view])
 
-  useEffect(() => { void load() }, [category, sort, pageIndex, featured])
+  useEffect(() => { void load() }, [category, sort, pageIndex, view])
 
   // Typing hits the catalog on every keystroke otherwise, and the catalog is
   // a few thousand rows filtered on the host.
@@ -121,7 +124,7 @@ export function MarketSection({ api, t, onInstalled }: { api: MarketApi; t: T; o
     if (debounce.current) clearTimeout(debounce.current)
     debounce.current = setTimeout(() => {
       // Typing is a request for the whole catalog, not for the shortlist.
-      if (query.trim() !== '') setFeatured(false)
+      if (query.trim() !== '') setView('all')
       setPageIndex(0); void load({ query, page: 0 })
     }, 220)
     return () => { if (debounce.current) clearTimeout(debounce.current) }
@@ -157,8 +160,11 @@ export function MarketSection({ api, t, onInstalled }: { api: MarketApi; t: T; o
       <RestartBar api={api} t={t} nonce={restartNonce} />
       <div className="dps-bar">
         <div className="dps-switch">
-          <button aria-pressed={featured} onClick={() => { setFeatured(true); setPageIndex(0) }}>{t('tabFeatured')}</button>
-          <button aria-pressed={!featured} onClick={() => { setFeatured(false); setPageIndex(0) }}>{t('tabAll')}</button>
+          {(['featured', 'popular', 'recent', 'all'] as const).map(key => (
+            <button key={key} aria-pressed={view === key} onClick={() => { setView(key); setPageIndex(0) }}>
+              {t(`tab${key[0]!.toUpperCase()}${key.slice(1)}` as never)}
+            </button>
+          ))}
         </div>
         <input
           className="dps-input dps-grow"
@@ -170,9 +176,9 @@ export function MarketSection({ api, t, onInstalled }: { api: MarketApi; t: T; o
           <option value="all">{t('allCategories')}</option>
           {(data?.categories ?? []).map(name => <option key={name} value={name}>{name}</option>)}
         </select>
-        <select className="dps-select" value={sort} onChange={event => { setSort(event.target.value); setPageIndex(0) }}>
+        {view === 'all' ? <select className="dps-select" value={sort} onChange={event => { setSort(event.target.value); setPageIndex(0) }}>
           {SORTS.map(key => <option key={key} value={key}>{t(`sort_${key}` as never)}</option>)}
-        </select>
+        </select> : null}
         <button className="dps-btn" onClick={async () => { await api.refreshCatalog(); await load() }}>{t('refresh')}</button>
       </div>
 
@@ -182,14 +188,14 @@ export function MarketSection({ api, t, onInstalled }: { api: MarketApi; t: T; o
       {data === null ? <p className="dps-hint">{t('loading')}</p> : (
         <>
           <div className="dps-count">
-            {featured
+            {view === 'featured'
               ? t('featuredCount', { n: data.total })
               : t('marketCount', { shown: data.total, all: data.catalogTotal })}
-            {!featured && query.trim() === '' ? <span className="dps-dim"> · {t('foldedNote')}</span> : null}
+            {view !== 'featured' && query.trim() === '' ? <span className="dps-dim"> · {t('foldedNote')}</span> : null}
           </div>
-          {data.entries.map(row => (
+          <div className="dps-market-grid">{data.entries.map(row => (
             <Card key={row.full} row={row} t={t} busy={busy} elapsed={elapsed} onInstall={install} />
-          ))}
+          ))}</div>
           {data.entries.length === 0 ? <p className="dps-hint">{t('marketEmpty')}</p> : null}
           {data.pages > 1 ? (
             <div className="dps-actions">

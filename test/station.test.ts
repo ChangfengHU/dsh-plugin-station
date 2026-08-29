@@ -162,6 +162,15 @@ describe('market catalog', () => {
     assert.equal(result.entries.find(r => r.repo === 'owner/mono')!.installed, false)
   })
 
+  it('backs the Popular and New tabs with deterministic catalog ordering', () => {
+    const rows = normalize(raw)
+    const popular = page(rows, { sort: 'downloads' }, new Set())
+    assert.equal(popular.entries[0]!.full, 'solo/one')
+
+    const recent = page(rows, { sort: 'recent' }, new Set())
+    assert.equal(recent.entries[0]!.name, 'dsh-remote-access')
+  })
+
   it('returns the picks in their listed order, each carrying its reason', () => {
     const rows = normalize(raw)
     const picks = page(rows, { featured: true }, new Set())

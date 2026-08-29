@@ -20,6 +20,8 @@ export const en = {
   restartRemoved: "Uninstalled but still running: {list}. Their menus and settings stay on screen until dsh restarts.",
 
   tabFeatured: "Picks",
+  tabPopular: "Popular",
+  tabRecent: "New",
   tabAll: "All",
   featuredCount: "{n} picks — short on purpose, and each says why",
   featuredStationOld: "Why: the panel you are reading. Skills, MCP, code plugins and this market in one place.",
@@ -218,6 +220,8 @@ export const zh: Record<ConsoleLocaleKey, string> = {
   restartRemoved: "已卸载但还在跑：{list}。它们的菜单和设置页会一直留在界面上，直到 dsh 重启。",
 
   tabFeatured: "精选",
+  tabPopular: "热门",
+  tabRecent: "最新",
   tabAll: "全部",
   featuredCount: "{n} 条精选——刻意短，而且每条都说明理由",
   featuredStationOld: "理由：你正在用的这个面板。技能、MCP、代码插件和这个市场收在一处。",

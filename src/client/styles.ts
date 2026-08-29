@@ -343,6 +343,14 @@ a.dps-btn { text-decoration: none; display: inline-block; }
 .dps-select { font: inherit; font-size: 12.5px; padding: 5px 8px; border-radius: 6px; color: inherit;
   background: var(--dps-raise); border: 1px solid var(--dps-line-strong); cursor: pointer; }
 .dps-mkt { gap: 6px; }
+.dps-market-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 12px; align-items: stretch; }
+.dps-market-card { display: flex; flex-direction: column; gap: 9px; min-width: 0; padding: 14px;
+  border: 1px solid var(--dps-line); border-radius: 11px; background: var(--dps-bg); }
+.dps-market-card:hover { border-color: var(--dps-line-strong); background: var(--dps-surface); }
+.dps-market-head { display: flex; align-items: flex-start; gap: 9px; }
+.dps-market-source { margin-top: auto; padding-top: 2px; }
+.dps-market-card .dps-name { line-height: 1.45; }
+.dps-market-card .dps-cd, .dps-market-card .dps-why { margin: 0; }
 .dps-chip.dps-cat { margin-left: 7px; font-weight: 400; opacity: .8; }
 .dps-log { margin: 0; font-family: var(--dps-mono); font-size: 11.5px; line-height: 1.55;
   background: var(--dps-surface); border: 1px solid var(--dps-line); border-radius: 8px;
