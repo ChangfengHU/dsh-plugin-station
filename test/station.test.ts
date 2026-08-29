@@ -166,7 +166,7 @@ describe('market catalog', () => {
     const rows = normalize(raw)
     const picks = page(rows, { featured: true }, new Set())
     // Only entries the list names, in the order it names them.
-    assert.deepEqual(picks.entries.map(r => r.name), ['dsh-skill-mcp', 'dsh-codex-claude-cli'],
+    assert.deepEqual(picks.entries.map(r => r.name), ['dsh-skill-mcp-console', 'dsh-codex-claude-cli'],
       'a pick the catalog does not carry is still listed; one it names but the fixture lacks is skipped')
     // A pick with no stated reason is an ad, so every one carries a key.
     assert.ok(picks.entries.every(r => typeof r.why === 'string' && r.why.length > 0))
@@ -176,12 +176,12 @@ describe('market catalog', () => {
   it('merges our own entries without duplicating an upstream listing', () => {
     const withUs = normalize({ plugins: [
       ...raw.plugins,
-      { name: 'ChangfengHU/dsh-skill-mcp', owner: 'ChangfengHU',
-        url: 'https://github.com/ChangfengHU/dsh-skill-mcp', category: 'skill',
+      { name: 'ChangfengHU/dsh-skill-mcp-console', owner: 'ChangfengHU',
+        url: 'https://github.com/ChangfengHU/dsh-skill-mcp-console', category: 'skill',
         description: { zh: '上游也收录了' }, stars: 5, downloads: 0 },
     ] })
     const picks = page(withUs, { featured: true }, new Set())
-    assert.equal(picks.entries.filter(r => r.name === 'dsh-skill-mcp').length, 1)
+    assert.equal(picks.entries.filter(r => r.name === 'dsh-skill-mcp-console').length, 1)
   })
 })
 

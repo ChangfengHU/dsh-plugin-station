@@ -53,6 +53,6 @@ as one of the choices.
 dsh plugin --profile web add github:ChangfengHU/dsh-plugin-station
 ```
 
-Skills and MCP live in [dsh-skill-mcp](https://github.com/ChangfengHU/dsh-skill-mcp),
+Skills and MCP live in [dsh-skill-mcp-console](https://github.com/ChangfengHU/dsh-skill-mcp-console),
 which this station lists among its picks. They are not plugins, and filing them
 under Plugins is a category error.

@@ -51,7 +51,7 @@ const MAX_AGE_MS = 6 * 60 * 60 * 1000
  * stopped being a recommendation and become a second catalog.
  */
 export const FEATURED: { key: string; why: string }[] = [
-  { key: 'dsh-skill-mcp', why: 'featuredSkillMcp' },
+  { key: 'dsh-skill-mcp-console', why: 'featuredSkillMcp' },
   { key: 'dsh-codex-claude-cli', why: 'featuredCodex' },
   { key: 'dsh-better-sidebar', why: 'featuredSidebar' },
   { key: 'modlens', why: 'featuredModlens' },
@@ -61,12 +61,12 @@ export const FEATURED: { key: string; why: string }[] = [
 /** Entries the catalog does not carry yet, published as our own picks. */
 export const OWN: CatalogEntry[] = [
   {
-    name: 'dsh-skill-mcp', full: 'ChangfengHU/dsh-skill-mcp', repo: 'ChangfengHU/dsh-skill-mcp',
-    owner: 'ChangfengHU', url: 'https://github.com/ChangfengHU/dsh-skill-mcp',
+    name: 'dsh-skill-mcp-console', full: 'ChangfengHU/dsh-skill-mcp-console', repo: 'ChangfengHU/dsh-skill-mcp-console',
+    owner: 'ChangfengHU', url: 'https://github.com/ChangfengHU/dsh-skill-mcp-console',
     category: 'skill',
     description: '技能与 MCP 两个顶级设置区：跨所有根的技能清单与影子检测、三态调用策略、MCP 工具级开关，以及保留注释与密钥的通用 mcpServers 视图。',
     npm: null, tarball: null, stars: 0, adjusted: 0, siblings: 1, downloads: 0, added: '2026-08-28',
-    spec: 'github:ChangfengHU/dsh-skill-mcp', installable: true, score: 100,
+    spec: 'github:ChangfengHU/dsh-skill-mcp-console', installable: true, score: 100,
   },
   {
     name: 'dsh-codex-claude-cli', full: 'ChangfengHU/dsh-codex-claude-cli', repo: 'ChangfengHU/dsh-codex-claude-cli',
