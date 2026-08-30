@@ -195,14 +195,14 @@ describe('market catalog', () => {
     assert.equal(popular.entries[0]!.full, 'solo/one')
 
     const recent = page(rows, { sort: 'recent' }, new Set())
-    assert.equal(recent.entries[0]!.name, 'dsh-remote-access')
+    assert.equal(recent.entries[0]!.name, 'dsh-skill-mcp-console')
   })
 
   it('returns the picks in their listed order, each carrying its reason', () => {
     const rows = normalize(raw)
     const picks = page(rows, { featured: true }, new Set())
     // Only entries the list names, in the order it names them.
-    assert.deepEqual(picks.entries.map(r => r.name), ['dsh-skill-mcp-console', 'dsh-codex-claude-cli', 'dsh-remote-access'],
+    assert.deepEqual(picks.entries.map(r => r.name), ['dsh-skill-mcp-console', 'dsh-codex-claude-cli'],
       'a pick the catalog does not carry is still listed; one it names but the fixture lacks is skipped')
     // A pick with no stated reason is an ad, so every one carries a key.
     assert.ok(picks.entries.every(r => typeof r.why === 'string' && r.why.length > 0))

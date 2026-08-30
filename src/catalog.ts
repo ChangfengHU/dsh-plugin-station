@@ -53,22 +53,10 @@ const MAX_AGE_MS = 6 * 60 * 60 * 1000
 export const FEATURED: { key: string; why: string }[] = [
   { key: 'dsh-skill-mcp-console', why: 'featuredSkillMcp' },
   { key: 'dsh-codex-claude-cli', why: 'featuredCodex' },
-  { key: 'dsh-better-sidebar', why: 'featuredSidebar' },
-  { key: 'modlens', why: 'featuredModlens' },
-  { key: 'dsh-context', why: 'featuredContext' },
-  { key: 'dsh-remote-access', why: 'featuredRemote' },
 ]
 
 /** Entries the catalog does not carry yet, published as our own picks. */
 export const OWN: CatalogEntry[] = [
-  {
-    name: 'dsh-remote-access', full: 'ChangfengHU/dsh-remote-access', repo: 'ChangfengHU/dsh-remote-access',
-    owner: 'ChangfengHU', url: 'https://github.com/ChangfengHU/dsh-remote-access',
-    category: 'security',
-    description: '通过本地 SSH 隧道安全恢复 DSH Plugin configuration，不部署 Worker、不改写客户端，也不把敏感配置面暴露到公网。',
-    npm: null, tarball: null, stars: 0, adjusted: 0, siblings: 1, downloads: 0, added: '2026-08-29',
-    spec: 'github:ChangfengHU/dsh-remote-access', installable: true, score: 100,
-  },
   {
     name: 'dsh-skill-mcp-console', full: 'ChangfengHU/dsh-skill-mcp-console', repo: 'ChangfengHU/dsh-skill-mcp-console',
     owner: 'ChangfengHU', url: 'https://github.com/ChangfengHU/dsh-skill-mcp-console',

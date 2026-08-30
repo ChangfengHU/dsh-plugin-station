@@ -47,8 +47,8 @@ function PackageCard({ row, api, t, onChanged, onRemoved }: {
   const off = row.entries.length > 0 && row.entries.every(entry => entry.disabled)
 
   return (
-    <div className={`dps-card${off ? ' dps-card-off' : ''}`}>
-      <div className="dps-row">
+    <article className={`dps-plugin-card${off ? ' dps-card-off' : ''}${open ? ' dps-plugin-card-open' : ''}`}>
+      <div className="dps-plugin-summary">
         <button
           className="dps-caret"
           aria-expanded={open}
@@ -59,11 +59,6 @@ function PackageCard({ row, api, t, onChanged, onRemoved }: {
           <div className="dps-name">{row.name}{row.version ? <span className="dps-dim"> {row.version}</span> : null}</div>
           <div className="dps-mono dps-trunc">{row.source || '—'}</div>
         </div>
-        {!row.bundled ? <span className="dps-chip dps-warn">{t('notAPlugin')}</span> : null}
-        {row.hasClient ? <span className="dps-chip">{t('hasClient')}</span> : null}
-        <span className="dps-chip">{row.entries.length} {t(row.entries.length === 1 ? 'entryOne' : 'entries')}</span>
-        {broken.length ? <span className="dps-chip dps-warn">{broken[0]!.fiber}</span> : null}
-        <span className="dps-dim dps-state">{off ? t('disabled') : t('enabled')}</span>
         <button
           className="dps-toggle"
           aria-pressed={!off}
@@ -77,6 +72,13 @@ function PackageCard({ row, api, t, onChanged, onRemoved }: {
             } finally { setBusy('') }
           }}
         />
+      </div>
+      <div className="dps-plugin-meta">
+        {!row.bundled ? <span className="dps-chip dps-warn">{t('notAPlugin')}</span> : null}
+        {row.hasClient ? <span className="dps-chip">{t('hasClient')}</span> : null}
+        <span className="dps-chip">{row.entries.length} {t(row.entries.length === 1 ? 'entryOne' : 'entries')}</span>
+        {broken.length ? <span className="dps-chip dps-warn">{broken[0]!.fiber}</span> : null}
+        <span className={`dps-chip ${off ? '' : 'dps-ok'}`}>{off ? t('disabled') : t('enabled')}</span>
       </div>
 
       {open ? (
@@ -153,7 +155,7 @@ function PackageCard({ row, api, t, onChanged, onRemoved }: {
           </div>
         </div>
       ) : null}
-    </div>
+    </article>
   )
 }
 
@@ -219,10 +221,10 @@ export function PluginsSection({ api, t }: { api: PluginsApi; t: T }) {
             {rows.length} {t('yourPlugins')}
             {meta.profile ? <span className="dps-dim"> · {t('profile')} {meta.profile}</span> : null}
           </div>
-          {rows.map(row => (
-            <PackageCard key={row.name} row={row} api={api} t={t}
-              onChanged={() => void load()} onRemoved={() => setAutoRestart(true)} />
-          ))}
+          <div className="dps-plugin-grid">{rows.map(row => (
+              <PackageCard key={row.name} row={row} api={api} t={t}
+                onChanged={() => void load()} onRemoved={() => setAutoRestart(true)} />
+            ))}</div>
           {rows.length === 0 ? <p className="dps-hint">{t('noPlugins')}</p> : null}
           <p className="dps-hint">{t('builtinFolded', { entries: meta.builtinEntries, packages: meta.builtinPackages })}</p>
         </>

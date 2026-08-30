@@ -159,9 +159,9 @@ export function MarketSection({ api, t, onInstalled }: { api: MarketApi; t: T; o
     <div className="dps-root">
       <RestartBar api={api} t={t} nonce={restartNonce} />
       <div className="dps-bar">
-        <div className="dps-switch">
+        <div className="dps-switch dps-market-tabs" role="tablist" aria-label={t('marketNav')}>
           {(['featured', 'popular', 'recent', 'all'] as const).map(key => (
-            <button key={key} aria-pressed={view === key} onClick={() => { setView(key); setPageIndex(0) }}>
+            <button key={key} role="tab" aria-selected={view === key} onClick={() => { setView(key); setPageIndex(0) }}>
               {t(`tab${key[0]!.toUpperCase()}${key.slice(1)}` as never)}
             </button>
           ))}
