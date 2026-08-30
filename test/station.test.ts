@@ -16,7 +16,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { after, before, describe, it } from 'node:test'
 import { phaseOf, setEntryDisabled } from '../src/mcpconfig.ts'
-import { collectPackages, packageOf } from '../src/plugins.ts'
+import { collectPackages, detachBundleForRemoval, packageOf, restoreDetachedBundle } from '../src/plugins.ts'
 import { normalize, page } from '../src/catalog.ts'
 
 
@@ -106,6 +106,33 @@ describe('code plugins', () => {
     text = await readFile(file, 'utf8')
     assert.doesNotMatch(text, /name: c\n\s+disabled: true/)
     await rm(dir, { recursive: true, force: true })
+  })
+})
+
+describe('plugin removal profile repair', () => {
+  it('detaches only the exact bundle before dependency removal starts', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'dsh-station-remove-'))
+    await writeFile(join(dir, 'package.json'), JSON.stringify({
+      dependencies: { keep: '^1.0.0' },
+      dsh: { profile: { bundles: ['@deepseek-ai/dsh-base', 'remove-me', 'keep', 'remove-me'] } },
+    }))
+    const edit = await detachBundleForRemoval(dir, 'remove-me')
+    assert.ok(edit)
+    const manifest = JSON.parse(await readFile(join(dir, 'package.json'), 'utf8'))
+    assert.deepEqual(manifest.dsh.profile.bundles, ['@deepseek-ai/dsh-base', 'keep'])
+  })
+
+  it('restores the exact manifest when dependency removal fails', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'dsh-station-remove-'))
+    await writeFile(join(dir, 'package.json'), JSON.stringify({
+      dependencies: { installed: '^1.0.0' },
+      dsh: { profile: { bundles: ['installed'] } },
+    }))
+    const original = await readFile(join(dir, 'package.json'), 'utf8')
+    const edit = await detachBundleForRemoval(dir, 'installed')
+    assert.ok(edit)
+    await restoreDetachedBundle(edit)
+    assert.equal(await readFile(join(dir, 'package.json'), 'utf8'), original)
   })
 })
 

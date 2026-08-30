@@ -27,7 +27,7 @@
  * @module dsh-plugin-station/plugins
  */
 
-import { readFile } from 'node:fs/promises'
+import { readFile, rename, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { PackageRow, PluginEntryRow } from './wire.ts'
 
@@ -40,7 +40,48 @@ interface Manifest {
   version?: unknown
   description?: unknown
   dependencies?: Record<string, unknown>
-  dsh?: { bundle?: unknown; client?: unknown }
+  dsh?: {
+    bundle?: unknown
+    client?: unknown
+    profile?: { bundles?: unknown }
+  }
+}
+
+/**
+ * Remove one successfully uninstalled package from the profile bundle list.
+ *
+ * Some DSH CLI versions remove the dependency but leave the bundle route in
+ * `dsh.profile.bundles`. The next boot then cannot resolve that package and
+ * the whole Web service enters a restart loop. This repair is deliberately
+ * narrower than a general manifest rewrite: it refuses to act while the
+ * dependency still exists and removes only exact string matches.
+ */
+export interface BundleDetachment {
+  readonly path: string
+  readonly original: string
+}
+
+async function atomicManifestWrite(path: string, content: string): Promise<void> {
+  const temporary = `${path}.plugin-station-${process.pid}-${Date.now()}.tmp`
+  await writeFile(temporary, content, 'utf8')
+  await rename(temporary, path)
+}
+
+/** Detach before invoking DSH: recomposition may destroy this service mid-call. */
+export async function detachBundleForRemoval(profileDir: string, packageName: string): Promise<BundleDetachment | null> {
+  const path = join(profileDir, 'package.json')
+  const raw = await readFile(path, 'utf8')
+  const manifest = JSON.parse(raw) as Manifest
+  const bundles = manifest.dsh?.profile?.bundles
+  if (!Array.isArray(bundles) || !bundles.includes(packageName)) return null
+  manifest.dsh!.profile!.bundles = bundles.filter(entry => entry !== packageName)
+  await atomicManifestWrite(path, `${JSON.stringify(manifest, null, 2)}\n`)
+  return { path, original: raw }
+}
+
+/** Restore the exact manifest if the package manager explicitly rejects removal. */
+export async function restoreDetachedBundle(edit: BundleDetachment): Promise<void> {
+  await atomicManifestWrite(edit.path, edit.original)
 }
 
 /** Read and parse a JSON file, or null when it is missing or malformed. */

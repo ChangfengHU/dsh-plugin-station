@@ -24,7 +24,7 @@ import {
 } from './mcpconfig.ts'
 import { spawn } from 'node:child_process'
 import { cachePath, loadCatalog, page as catalogPage, type CatalogQuery } from './catalog.ts'
-import { collectPackages } from './plugins.ts'
+import { collectPackages, detachBundleForRemoval, restoreDetachedBundle } from './plugins.ts'
 import type { PluginEntryRow } from './wire.ts'
 
 /** `mcp__<server>__<tool>` — how the official client namespaces what it registers. */
@@ -192,8 +192,16 @@ export class PluginStationService extends TypertRemoteService {
     if (this.installing) throw new Error(`already installing ${this.installing} — one at a time`)
     this.installing = name
     try {
+      // Do this BEFORE invoking the CLI. Its successful profile rewrite can
+      // recompose Cordis and destroy this service before the child emits
+      // `close`, so post-success cleanup is not a reachable guarantee.
+      const detached = await detachBundleForRemoval(profileDir(this.home), name)
       const result = await dshPlugin(['remove', name])
-      return JSON.stringify({ ...result, mustRestart: result.code === 0 })
+      if (result.code !== 0) {
+        if (detached) await restoreDetachedBundle(detached)
+        return JSON.stringify({ ...result, mustRestart: false })
+      }
+      return JSON.stringify({ ...result, repairedBundle: Boolean(detached), mustRestart: true })
     } finally { this.installing = null }
   }
 

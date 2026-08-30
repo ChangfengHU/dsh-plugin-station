@@ -39,7 +39,7 @@ export { PluginStationService } from './service.ts'
 export {
   backup, loadPatch, phaseOf, setEntryDisabled,
 } from './mcpconfig.ts'
-export { collectPackages, packageOf } from './plugins.ts'
+export { collectPackages, detachBundleForRemoval, packageOf, restoreDetachedBundle } from './plugins.ts'
 export { CATALOG_URL, PAGE_SIZE, cachePath, loadCatalog, normalize, page, repoOf, specOf } from './catalog.ts'
 export { CONSOLE_INVOCATIONS, METHODS, PKG } from './wire.ts'
 export type {
