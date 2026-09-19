@@ -12,6 +12,9 @@ export type ConsoleLocaleKey = keyof typeof en
 /** English copy. */
 export const en = {
   featuredSkillMcp: "Why: the panel this station cannot replace — skills and MCP are not plugins, and this is where they live.",
+  featuredTaskConsole: "Why: makes Agent, Task and Session one observable workflow, including Actions, DAG, Trace, replay and delivery acceptance.",
+  featuredPluginStation: "Why: the deployment's own plugin workbench — real install state, lifecycle controls and a deliberately curated market.",
+  featuredFreeSearch: "Why: makes the native web_search usable without one mandatory vendor key, with free-first routing and managed provider fallbacks.",
 
   replyLost: "The reply did not come back — installing rewrites the profile and can restart this panel mid-call. The list below is re-read from disk, so it shows what actually happened.",
 
@@ -208,6 +211,9 @@ export const en = {
 /** Chinese copy. */
 export const zh: Record<ConsoleLocaleKey, string> = {
   featuredSkillMcp: "理由：这个站取代不了的那一半——技能和 MCP 不是插件，它们归它管。",
+  featuredTaskConsole: "理由：把 Agent、Task 和 Session 变成可观测的统一工作流，包含 Actions、DAG、Trace、回放和交付验收。",
+  featuredPluginStation: "理由：部署自己的插件工作台——真实安装状态、生命周期管理和刻意保持精选的市场。",
+  featuredFreeSearch: "理由：让原生 web_search 不再依赖单一厂商 Key，默认免费优先，并提供受管理的 Provider 降级链。",
 
   replyLost: "应答没回来——安装会改写 profile，可能在调用中途把这个面板重建掉。下面的列表是从磁盘重新读的，以它为准。",
 

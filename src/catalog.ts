@@ -52,6 +52,9 @@ const MAX_AGE_MS = 6 * 60 * 60 * 1000
  */
 export const FEATURED: { key: string; why: string }[] = [
   { key: 'dsh-skill-mcp-console', why: 'featuredSkillMcp' },
+  { key: 'dsh-task-console', why: 'featuredTaskConsole' },
+  { key: 'dsh-plugin-station', why: 'featuredPluginStation' },
+  { key: 'dsh-free-search', why: 'featuredFreeSearch' },
   { key: 'dsh-codex-claude-cli', why: 'featuredCodex' },
 ]
 
@@ -64,6 +67,30 @@ export const OWN: CatalogEntry[] = [
     description: '技能与 MCP 两个顶级设置区：跨所有根的技能清单与影子检测、三态调用策略、MCP 工具级开关，以及保留注释与密钥的通用 mcpServers 视图。',
     npm: null, tarball: null, stars: 0, adjusted: 0, siblings: 1, downloads: 0, added: '2026-08-28',
     spec: 'github:ChangfengHU/dsh-skill-mcp-console', installable: true, score: 100,
+  },
+  {
+    name: 'dsh-task-console', full: 'ChangfengHU/dsh-task-console', repo: 'ChangfengHU/dsh-task-console',
+    owner: 'ChangfengHU', url: 'https://github.com/ChangfengHU/dsh-task-console',
+    category: 'agent',
+    description: 'Agent、Task 与 Session 的统一控制台：角色能力、Actions、工作流执行、DAG、Trace、回放和交付验收集中在同一插件。',
+    npm: null, tarball: null, stars: 0, adjusted: 0, siblings: 1, downloads: 0, added: '2026-09-19',
+    spec: 'github:ChangfengHU/dsh-task-console', installable: true, score: 100,
+  },
+  {
+    name: 'dsh-plugin-station', full: 'ChangfengHU/dsh-plugin-station', repo: 'ChangfengHU/dsh-plugin-station',
+    owner: 'ChangfengHU', url: 'https://github.com/ChangfengHU/dsh-plugin-station',
+    category: 'ui',
+    description: 'DSH 插件工作台：查看真实安装状态、管理代码插件，并通过 Picks、Popular、New 与 All 浏览经过整理的插件市场。',
+    npm: null, tarball: null, stars: 0, adjusted: 0, siblings: 1, downloads: 0, added: '2026-09-19',
+    spec: 'github:ChangfengHU/dsh-plugin-station', installable: true, score: 100,
+  },
+  {
+    name: 'dsh-free-search', full: 'ChangfengHU/dsh-free-search', repo: 'ChangfengHU/dsh-free-search',
+    owner: 'ChangfengHU', url: 'https://github.com/ChangfengHU/dsh-free-search',
+    category: 'search',
+    description: '接管原生 web_search：免费搜索优先，支持 Tavily 与 Firecrawl Key 池、随机选择、额度检查、失败降级、高级搜索和平台搜索。',
+    npm: null, tarball: null, stars: 0, adjusted: 0, siblings: 1, downloads: 0, added: '2026-09-19',
+    spec: 'github:ChangfengHU/dsh-free-search', installable: true, score: 100,
   },
   {
     name: 'dsh-codex-claude-cli', full: 'ChangfengHU/dsh-codex-claude-cli', repo: 'ChangfengHU/dsh-codex-claude-cli',
@@ -231,11 +258,12 @@ export function page(
 ): CatalogPage {
   const needle = (query.query ?? '').trim().toLowerCase()
 
-  // Our own entries are not in the community catalog, so they are merged in
-  // rather than looked up. Merging by name keeps a later upstream listing
-  // from producing a duplicate.
-  const known = new Set(rows.map(row => row.name))
-  const all = [...rows, ...OWN.filter(row => !known.has(row.name))]
+  // Our maintained entries are authoritative for their package names. This
+  // matters for maintained forks such as dsh-free-search: an upstream catalog
+  // row must not make the Pick install a different build than the one named by
+  // the card. Filtering before merging also keeps one visible row per name.
+  const ownNames = new Set(OWN.map(row => row.name))
+  const all = [...OWN, ...rows.filter(row => !ownNames.has(row.name))]
 
   if (query.featured) {
     const byName = new Map(all.map(row => [row.npm ?? row.name, row]))
