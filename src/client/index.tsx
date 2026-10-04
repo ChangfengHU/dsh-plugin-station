@@ -17,9 +17,11 @@ import { en, zh, type ConsoleLocaleKey } from './locales.ts'
 import { CONSOLE_REMOTE, unwrap } from './remote.ts'
 import { installStyles } from './styles.ts'
 import { fill } from './ui.tsx'
+import { PluginStationWorkbenchPage } from './WorkbenchPage.tsx'
 
 export { PluginsSection } from './PluginsSection.tsx'
 export { MarketSection } from './MarketSection.tsx'
+export { PluginStationWorkbenchPage } from './WorkbenchPage.tsx'
 export type { ConsoleLocaleKey }
 
 /** Dictionary namespace owned by this plugin. */
@@ -92,5 +94,13 @@ export async function apply(ctx: any): Promise<void> {
     locale: NS,
     inject: () => ({ api: pluginsApi, t }),
   }, PluginsSection))
+
+  ctx.slots.inject('workbench.page', () => ctx.slots.register({
+    name: 'workbench.page',
+    id: 'plugin-station',
+    order: 40,
+    label: 'Plugin Station',
+    inject: () => ({ marketApi, pluginsApi, t }),
+  }, PluginStationWorkbenchPage))
 
 }

@@ -65,6 +65,13 @@ body[data-ds-dark-theme] .dps-root, body[data-ds-dark-theme] .dps-scrim {
 }
 
 .dps-root { display: flex; flex-direction: column; gap: 13px; min-width: 0; }
+.dps-workbench-page { max-width: 1180px; margin: 0 auto; }
+.dps-workbench-head { display: flex; align-items: flex-start; gap: 16px; padding: 18px 20px;
+  border: 1px solid var(--dps-line); border-radius: 12px; background: var(--dps-bg); }
+.dps-workbench-head > div:first-child { flex: 1; min-width: 0; }
+.dps-workbench-head h2 { margin: 0 0 5px; font-size: 18px; }
+.dps-workbench-head p { margin: 0; color: var(--dps-soft); font-size: 12.5px; line-height: 1.5; }
+@media (max-width: 640px) { .dps-workbench-head { flex-direction: column; } }
 .dps-head { display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
 .dps-head h3 { margin: 0 0 4px; font-size: 17px; font-weight: 600; }
 .dps-head p, .dps-lede { margin: 0; font-size: 13px; opacity: .72; max-width: 62ch; line-height: 1.62; }
