@@ -47,7 +47,7 @@ function profileName(argv: string[] = process.argv): string {
 
 /** The booted profile's directory. */
 function profileDir(home: string, profile = profileName()): string {
-  return join(home, '.dsh', 'profiles', profile)
+  return join(process.env.DSH_HOME ?? join(home, '.dsh'), 'profiles', profile)
 }
 
 /** Where the profile patch layer lives. */

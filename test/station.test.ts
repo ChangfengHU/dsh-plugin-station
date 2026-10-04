@@ -15,9 +15,19 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { after, before, describe, it } from 'node:test'
-import { phaseOf, setEntryDisabled } from '../src/mcpconfig.ts'
+import { phaseOf, setEntryDisabled, policyPath } from '../src/mcpconfig.ts'
 import { collectPackages, detachBundleForRemoval, packageOf, restoreDetachedBundle } from '../src/plugins.ts'
 import { normalize, page } from '../src/catalog.ts'
+
+it('keeps MCP policy storage inside the configured DSH_HOME', () => {
+  const previous = process.env.DSH_HOME
+  try {
+    process.env.DSH_HOME = '/isolated/dsh'
+    assert.equal(policyPath('/ordinary/home'), '/isolated/dsh/plugin-station-tools.json')
+  } finally {
+    if (previous === undefined) delete process.env.DSH_HOME; else process.env.DSH_HOME = previous
+  }
+})
 
 
 

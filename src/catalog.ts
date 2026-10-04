@@ -122,7 +122,7 @@ interface RawEntry {
 
 /** Where the cached catalog lives. */
 export function cachePath(home: string): string {
-  return join(home, '.dsh', 'plugin-station-catalog.json')
+  return join(process.env.DSH_HOME ?? join(home, '.dsh'), 'plugin-station-catalog.json')
 }
 
 /** The repository part of a catalog name — `owner/repo#packages/x` → `owner/repo`. */
