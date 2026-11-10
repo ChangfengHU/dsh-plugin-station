@@ -59,4 +59,4 @@ under Plugins is a category error.
 
 ## Startup Performance
 
-The client uses compact strict wire codecs and a 140 KB build budget. In Web deployments, the station also emits preload links for the live, revisioned, same-origin plugin graph through DSH's existing HTML extension. This starts downloading scripts earlier; native module execution, dependency ordering, activation checks and permissions are unchanged. See [performance notes](docs/performance-1.3.4.md).
+The client uses compact strict wire codecs and a 140 KB build budget. In Web deployments, the station also emits preload links for the live, revisioned, same-origin plugin graph through DSH's existing HTML extension. Version 1.3.5 skips the deferred Context, Trajectory, Plugin Station and Skills/MCP interfaces and gives Chat-critical resources high priority. The remaining native boot-barrier modules start downloading early; module execution, activation checks and permissions are unchanged. See [performance notes](docs/performance-1.3.4.md).
