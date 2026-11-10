@@ -29,6 +29,7 @@
 
 import type { Context } from '@deepseek-ai/cordis'
 import { PluginStationService } from './service.ts'
+import { bootPreloadMarkup } from './boot-preloads.ts'
 
 export const name = 'plugin-station'
 
@@ -53,6 +54,12 @@ export type {
  * @param ctx - context carrying the tool registry and the loader.
  */
 export async function apply(ctx: Context): Promise<void> {
+  ctx.inject(['webServer', 'clientModules'], web => {
+    web.on('webserver/index-inject', table => {
+      const html = bootPreloadMarkup(web.clientModules.graph())
+      if (html) table.unshift({ kind: 'html', placement: 'head', html })
+    })
+  })
   await ctx.plugin(PluginStationService)
 }
 export type { CatalogEntry, CatalogPage, PackageRow, PluginEntryRow } from './wire.ts'

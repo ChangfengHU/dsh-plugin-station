@@ -56,3 +56,7 @@ dsh plugin --profile web add github:ChangfengHU/dsh-plugin-station
 Skills and MCP live in [dsh-skill-mcp-console](https://github.com/ChangfengHU/dsh-skill-mcp-console),
 which this station lists among its picks. They are not plugins, and filing them
 under Plugins is a category error.
+
+## Startup Performance
+
+The client uses compact strict wire codecs and a 140 KB build budget. In Web deployments, the station also emits preload links for the live, revisioned, same-origin plugin graph through DSH's existing HTML extension. This starts downloading scripts earlier; native module execution, dependency ordering, activation checks and permissions are unchanged. See [performance notes](docs/performance-1.3.4.md).
